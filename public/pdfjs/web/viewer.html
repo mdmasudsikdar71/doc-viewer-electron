@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PDF.js Viewer</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: #404040;
+        }
+        #pdf-container {
+            height: 100%;
+            width: 100%;
+            overflow: auto;
+            background: #444;
+            display: flex;
+            justify-content: center;
+        }
+        canvas {
+            margin: 20px auto;
+            box-shadow: 0 0 8px rgba(0,0,0,0.5);
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+<div id="pdf-container"></div>
+
+<!-- PDF.js scripts -->
+<script src="../../node_modules/pdfjs-dist/build/pdf.js"></script>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const file = urlParams.get('file');
+
+    if (!file) {
+        document.body.innerHTML = "<h2 style='color:white;text-align:center;margin-top:20%'>No PDF file specified.</h2>";
+    } else {
+        const container = document.getElementById('pdf-container');
+        const loadingTask = pdfjsLib.getDocument(file);
+
+        loadingTask.promise.then(pdf => {
+            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                pdf.getPage(pageNum).then(page => {
+                    const viewport = page.getViewport({ scale: 1.5 });
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    container.appendChild(canvas);
+                    page.render({ canvasContext: context, viewport: viewport });
+                });
+            }
+        }).catch(err => {
+            document.body.innerHTML = `<h3 style="color:red;text-align:center;margin-top:20%">${err.message}</h3>`;
+        });
+    }
+</script>
+</body>
+</html>

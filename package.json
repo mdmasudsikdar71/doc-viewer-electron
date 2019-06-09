@@ -1,0 +1,17 @@
+{
+  "name": "doc-viewer-electron",
+  "version": "1.0.0",
+  "description": "A minimal Electron application for Document viewer",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.com/electron/electron-quick-start",
+  "keywords": ["document", "viewer"],
+  "devDependencies": {
+    "electron": "^3.0.4"
+  },
+  "build": {
+    "extraResources": ["./public/**"]
+  }
+}
